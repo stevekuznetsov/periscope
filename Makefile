@@ -1,0 +1,22 @@
+all: builds deployments
+.PHONY: all
+
+builds: env-build sub-build
+.PHONY: builds
+
+env-build:
+    oc process -f openshift/env-build.yaml | oc apply -f -
+.PHONY: env-build
+
+sub-build:
+    oc process -f openshift/sub-build.yaml | oc apply -f -
+.PHONY: sub-build
+
+deployments: sub-deployment
+.PHONY: deployments
+
+sub-deployment:
+    oc create secret generic gce --from-file=credentials=${GCE_CREDENTIALS_FILE}
+    oc create configmap sub-config --from-file=config=config/sub.json -o yaml --dry-run | oc apply -f -
+    oc apply -f openshift/sub-deployment.yaml
+.PHONY: sub-deployment

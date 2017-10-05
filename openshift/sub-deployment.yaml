@@ -1,0 +1,76 @@
+apiVersion: v1
+kind: List
+items:
+- apiVersion: v1
+  kind: Route
+  metadata:
+    name: sub
+  spec:
+    tls:
+      insecureEdgeTerminationPolicy: Redirect
+      termination: edge
+    to:
+      kind: Service
+      name: sub
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: sub
+  spec:
+    selector:
+      app: periscope
+      component: sub
+    ports:
+    - port: 80
+      targetPort: 8080
+    type: NodePort
+- apiVersion: apps.openshift.io/v1
+  kind: DeploymentConfig
+  metadata:
+    name: sub
+    labels:
+      app: periscope
+      component: sub
+  spec:
+    replicas: 1
+    revisionHistoryLimit: 2
+    template:
+      metadata:
+        labels:
+          app: periscope
+          component: sub
+      spec:
+        containers:
+        - name: sub
+          image: sub
+          args:
+          - --config-path=/etc/config/sub.json
+          ports:
+            - name: http
+              containerPort: 8080
+          volumeMounts:
+          - mountPath: /etc/credentials
+            name: credentials
+            readOnly: true
+          - name: config
+            mountPath: /etc/config
+            readOnly: true
+        volumes:
+        - name: credentials
+          secret:
+            defaultMode: 420
+            secretName: gce
+        - name: config
+          configMap:
+            name: sub-config
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - sub
+        from:
+          kind: ImageStreamTag
+          name: "sub:latest"
+      type: ImageChange
+

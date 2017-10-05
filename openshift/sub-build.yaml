@@ -1,0 +1,93 @@
+apiVersion: v1
+kind: Template
+labels:
+  template: env
+metadata:
+  name: env
+  iconClass: icon-go-gopher
+parameters:
+- name: SOURCE_REF
+  displayName: Source Ref
+  description: Git reference to use for building the Origin release environment image
+  value: master
+  required: false
+- name: SOURCE_URL
+  displayName: Source URL
+  description: Git source URL to use for building the Origin release environment image
+  value: https://github.com/stevekuznetsov/periscope.git
+  required: false
+objects:
+- kind: ImageStream
+  apiVersion: v1
+  metadata:
+    name: sub
+- kind: BuildConfig
+  apiVersion: v1
+  metadata:
+    name: sub-binary
+  spec:
+    successfulBuildsHistoryLimit: 1
+    failedBuildsHistoryLimit: 2
+    output:
+      to:
+        kind: ImageStreamTag
+        name: sub:binaries
+    source:
+      git:
+        ref: "${SOURCE_REF}"
+        uri: "${SOURCE_URL}"
+      type: Git
+      dockerfile: |
+        FROM env:latest
+        COPY . /go/src/github.com/stevekuznetsov/periscope
+        RUN cd /go/src/github.com/stevekuznetsov/periscope && \
+            GOPATH=/go CGO_ENABLED=0 go build -a cmd/sub/main.go
+    strategy:
+      dockerStrategy:
+        from:
+          kind: ImageStreamTag
+          name: env:latest
+        imageOptimizationPolicy: SkipLayers
+    triggers:
+    - type: ConfigChange
+    - type: GitHub
+      github:
+        secret: pohRLhJWRgBHOvv6wcfi
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    name: sub
+  spec:
+    successfulBuildsHistoryLimit: 1
+    failedBuildsHistoryLimit: 2
+    output:
+      to:
+        kind: ImageStreamTag
+        name: sub:latest
+    source:
+      dockerfile: |
+        FROM        centos:7
+        MAINTAINER  Steve Kuznetsov <skuznets@redhat.com>
+
+        COPY main /bin/sub
+
+        ENTRYPOINT [ "/bin/sub" ]
+      images:
+      - from:
+          kind: ImageStreamTag
+          name: sub:binaries
+        paths:
+        - destinationDir: .
+          sourcePath: /go/src/github.com/stevekuznetsov/periscope/.
+    strategy:
+      dockerStrategy:
+        from:
+          kind: DockerImage
+          name: centos:7
+        imageOptimizationPolicy: SkipLayers
+    triggers:
+    - imageChange:
+        from:
+          kind: ImageStreamTag
+          name: sub:binaries
+      type: ImageChange

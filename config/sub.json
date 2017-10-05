@@ -1,0 +1,7 @@
+{
+  "gcs": {
+    "project-id": "openshift-gce-devel",
+    "topic": "build-results",
+    "credentials-file": "/etc/credentials/credentials.json"
+  }
+}
