@@ -37,6 +37,15 @@ func (a *Agent) Run() error {
 	defer client.Close()
 	a.logger.Infof("created a GCP pub/sub client for project %q", a.subConfig.ProjectIdentifier)
 
+	topics := client.Topics(ctx)
+	for {
+		topic, err := topics.Next()
+		if err != nil {
+			a.logger.WithError(err).Infof("Failed to get next topic")
+		}
+		a.logger.Infof("Found topic %q", topic.ID())
+	}
+
 	topic := client.Topic(a.subConfig.Topic)
 	a.logger.Infof("created a GCP pub/sub topic for %q", topic.ID())
 
