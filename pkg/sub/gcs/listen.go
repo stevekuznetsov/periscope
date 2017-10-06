@@ -52,6 +52,6 @@ func (a *Agent) Run() error {
 }
 
 func (a *Agent) handle(ctx context.Context, message *pubsub.Message) {
-	a.logger.WithField("id", message.ID).WithField("attributes", message.Attributes).Infof("Recieved: %v", message.Data)
+	a.logger.WithField("id", message.ID).WithField("attributes", message.Attributes).Infof("Recieved: %s", message.Data)
 	message.Ack()
 }
