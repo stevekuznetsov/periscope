@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	subscriptionName = "periscope-gcp-listener"
+	subscriptionName = "periscope"
 )
 
 func NewAgent(subConfig *sub.GoogleCloudStorage, logger *logrus.Entry) *Agent {
@@ -37,22 +37,11 @@ func (a *Agent) Run() error {
 	defer client.Close()
 	a.logger.Infof("created a GCP pub/sub client for project %q", a.subConfig.ProjectIdentifier)
 
-	topics := client.Topics(ctx)
-	for {
-		topic, err := topics.Next()
-		if err != nil {
-			a.logger.WithError(err).Infof("Failed to get next topic")
-		}
-		a.logger.Infof("Found topic %q", topic.ID())
-	}
-
 	topic := client.Topic(a.subConfig.Topic)
 	a.logger.Infof("created a GCP pub/sub topic for %q", topic.ID())
 
-	subscription, err := client.CreateSubscription(ctx, subscriptionName, pubsub.SubscriptionConfig{Topic: topic})
-	if err != nil {
-		return fmt.Errorf("failed to get a subscription: %v", err)
-	}
+
+	subscription := client.Subscription(subscriptionName)
 	a.logger.Infof("subscribed to GCP pub/sub topic as %q", subscription.ID())
 
 	if err := subscription.Receive(ctx, a.handle); err != nil {
