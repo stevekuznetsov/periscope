@@ -12,7 +12,7 @@ import (
 
 func NewClient(credentials *postgresql.Credentials, logger *logrus.Entry) (*Client, error) {
 	connectionString := fmt.Sprintf(
-		"host=%s dbname=%s user=%s password=%s",
+		"host=%s dbname=%s user=%s password=%s sslmode=disable",
 		credentials.ServiceName, credentials.Database, credentials.Username, credentials.Password,
 	)
 	db, err := sql.Open("postgres", connectionString)

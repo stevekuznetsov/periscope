@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="62a7dc7d-0c37-47e5-a91d-889b8b319a44" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/openshift/poll-deployment.yaml" afterPath="$PROJECT_DIR$/openshift/poll-deployment.yaml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pkg/postgresql/client.go" afterPath="$PROJECT_DIR$/pkg/postgresql/client.go" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -205,9 +204,11 @@
           <file leaf-file-name="client.go" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/pkg/postgresql/client.go">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="155">
-                  <caret line="5" column="0" lean-forward="true" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
-                  <folding />
+                <state relative-caret-position="434">
+                  <caret line="14" column="62" lean-forward="false" selection-start-line="14" selection-start-column="62" selection-end-line="14" selection-end-column="62" />
+                  <folding>
+                    <element signature="e#20#169#0" expanded="true" />
+                  </folding>
                 </state>
               </provider>
             </entry>
@@ -881,9 +882,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/pkg/postgresql/client.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="155">
-          <caret line="5" column="0" lean-forward="true" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
-          <folding />
+        <state relative-caret-position="434">
+          <caret line="14" column="62" lean-forward="false" selection-start-line="14" selection-start-column="62" selection-end-line="14" selection-end-column="62" />
+          <folding>
+            <element signature="e#20#169#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
