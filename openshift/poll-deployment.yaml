@@ -23,7 +23,7 @@ items:
           image: poll
           args:
           - --config-path=/etc/config/poll.json
-          - --psql-config-path=/etc/config/postgresql.json
+          - --psql-config-path=/etc/postgresql-config/postgresql.json
           ports:
             - name: http
               containerPort: 8080
@@ -35,7 +35,7 @@ items:
             mountPath: /etc/config
             readOnly: true
           - name: psql-config
-            mountPath: /etc/config
+            mountPath: /etc/postgresql-config
             readOnly: true
         volumes:
         - name: credentials

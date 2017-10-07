@@ -17,6 +17,10 @@ func NewClient(credentials *postgresql.Credentials, logger *logrus.Entry) (*Clie
 	)
 	db, err := sql.Open("postgres", connectionString)
 	if err != nil {
+		return nil, fmt.Errorf("failed to create postgres client: %v", err)
+	}
+
+	if err := db.Ping(); err != nil {
 		return nil, fmt.Errorf("failed to connect to postgres: %v", err)
 	}
 	logger.Info("Connected to postgresql database")
