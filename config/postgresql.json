@@ -1,0 +1,4 @@
+{
+  "credential-dir": "/etc/postgresql",
+  "service-name": "postgresql"
+}

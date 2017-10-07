@@ -26,6 +26,12 @@
   version = "v2.0.0"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/lib/pq"
+  packages = [".","oid"]
+  revision = "b77235e3890a962fe8a6f8c4c7198679ca7814e7"
+
+[[projects]]
   name = "github.com/sirupsen/logrus"
   packages = ["."]
   revision = "f006c2ac4710855cf0f916dd6b77acf6b048dc6e"
@@ -106,6 +112,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "2d14d39693bb8973777a3b763bb11d60c4461a13b407a00ae39192a25091ee3b"
+  inputs-digest = "7d16096bbea465e589e4f847433e3a460b69bee090dade41ed378391e2c619d6"
   solver-name = "gps-cdcl"
   solver-version = 1

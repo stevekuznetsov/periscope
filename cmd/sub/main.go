@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	configPath = flag.String("config-path", "", "Path to JSON subscription configuration.")
+	configPath = flag.String("config-path", "", "Path to configuration.")
 )
 
 func main() {
