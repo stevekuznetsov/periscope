@@ -1,19 +1,19 @@
 apiVersion: v1
 kind: Template
 labels:
-  template: env
+  template: sub-build
 metadata:
-  name: env
+  name: sub-build
   iconClass: icon-go-gopher
 parameters:
 - name: SOURCE_REF
   displayName: Source Ref
-  description: Git reference to use for building the Origin release environment image
+  description: Git reference to use for building 
   value: master
   required: false
 - name: SOURCE_URL
   displayName: Source URL
-  description: Git source URL to use for building the Origin release environment image
+  description: Git source URL to use for building 
   value: https://github.com/stevekuznetsov/periscope.git
   required: false
 objects:

@@ -10,8 +10,8 @@ type Configuration struct {
 // GoogleCloudStorage contains options for receiving
 // notifications from a GCS bucket subscription.
 type GoogleCloudStorage struct {
-	ProjectIdentifier string `json:"project-id"`
-	Topic             string `json:"topic"`
+	Project      string `json:"project"`
+	Subscription string `json:"subscription"`
 
 	// CredentialsFile is the file where Google Cloud
 	// authentication credentials are stored. See:

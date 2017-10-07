@@ -8,6 +8,12 @@
   version = "v0.15.0"
 
 [[projects]]
+  name = "github.com/ghodss/yaml"
+  packages = ["."]
+  revision = "0ca9ea5df5451ffdf184b4428c902747c2c11cd7"
+  version = "v1.0.0"
+
+[[projects]]
   branch = "master"
   name = "github.com/golang/protobuf"
   packages = ["proto","protoc-gen-go/descriptor","ptypes","ptypes/any","ptypes/duration","ptypes/empty","ptypes/timestamp"]
@@ -85,9 +91,21 @@
   revision = "f92cdcd7dcdc69e81b2d7b338479a19a8723cfa3"
   version = "v1.6.0"
 
+[[projects]]
+  branch = "v2"
+  name = "gopkg.in/yaml.v2"
+  packages = ["."]
+  revision = "eb3733d160e74a9c7e442f435eb3bea458e1d19f"
+
+[[projects]]
+  branch = "master"
+  name = "k8s.io/test-infra"
+  packages = ["prow/kube"]
+  revision = "48d61e88eb7181c7827e57dd78a72d03e1ced16e"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "3acbb0c023241909f3c8124d99c8a1e504bba061adbbd59bfe63a344daa63ee7"
+  inputs-digest = "2d14d39693bb8973777a3b763bb11d60c4461a13b407a00ae39192a25091ee3b"
   solver-name = "gps-cdcl"
   solver-version = 1

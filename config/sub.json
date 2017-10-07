@@ -1,7 +1,7 @@
 {
   "gcs": {
-    "project-id": "openshift-gce-devel",
-    "topic": "build-results",
+    "project": "openshift-gce-devel",
+    "subscription": "periscope",
     "credentials-file": "/etc/credentials/credentials.json"
   }
 }

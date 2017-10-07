@@ -1,0 +1,184 @@
+/*
+Copyright 2016 The Kubernetes Authors.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+package main
+
+import (
+	"bufio"
+	"bytes"
+	"errors"
+	"io"
+	"io/ioutil"
+	"net/http"
+	"net/http/httptest"
+	"net/url"
+	"strconv"
+	"testing"
+	"time"
+
+	"github.com/ghodss/yaml"
+
+	"k8s.io/test-infra/prow/kube"
+)
+
+type flc int
+
+func (f flc) GetJobLog(job, id string) ([]byte, error) {
+	if job == "job" && id == "123" {
+		return []byte("hello"), nil
+	}
+	return nil, errors.New("muahaha")
+}
+
+func (f flc) GetJobLogStream(job, id string, options map[string]string) (io.ReadCloser, error) {
+	if job == "job" && id == "123" {
+		return ioutil.NopCloser(bytes.NewBuffer([]byte("hello\r\n"))), nil
+	}
+	return nil, errors.New("muahaha")
+}
+
+func TestHandleLog(t *testing.T) {
+	var testcases = []struct {
+		name string
+		path string
+		code int
+	}{
+		{
+			name: "no job name",
+			path: "",
+			code: http.StatusBadRequest,
+		},
+		{
+			name: "job but no id",
+			path: "?job=job",
+			code: http.StatusBadRequest,
+		},
+		{
+			name: "id but no job",
+			path: "?id=123",
+			code: http.StatusBadRequest,
+		},
+		{
+			name: "id and job, found",
+			path: "?job=job&id=123",
+			code: http.StatusOK,
+		},
+		{
+			name: "id and job, found",
+			path: "?job=job&id=123&follow=true",
+			code: http.StatusOK,
+		},
+		{
+			name: "id and job, not found",
+			path: "?job=ohno&id=123",
+			code: http.StatusNotFound,
+		},
+	}
+	handler := handleLog(flc(0))
+	for _, tc := range testcases {
+		req, err := http.NewRequest(http.MethodGet, "", nil)
+		if err != nil {
+			t.Fatalf("Error making request: %v", err)
+		}
+		u, err := url.Parse(tc.path)
+		if err != nil {
+			t.Fatalf("Error parsing URL: %v", err)
+		}
+		var follow = false
+		if ok, _ := strconv.ParseBool(u.Query().Get("follow")); ok {
+			follow = true
+		}
+		req.URL = u
+		rr := httptest.NewRecorder()
+		handler.ServeHTTP(rr, req)
+		if rr.Code != tc.code {
+			t.Errorf("Wrong error code. Got %v, want %v", rr.Code, tc.code)
+		} else if rr.Code == http.StatusOK {
+			if follow {
+				//wait a little to get the chunks
+				time.Sleep(2 * time.Millisecond)
+				reader := bufio.NewReader(rr.Body)
+				var buf bytes.Buffer
+				for {
+					line, err := reader.ReadBytes('\n')
+					if err == io.EOF {
+						break
+					}
+					if err != nil {
+						t.Fatalf("Expecting reply with content but got error: %v", err)
+					}
+					buf.Write(line)
+				}
+				if !bytes.Contains(buf.Bytes(), []byte("hello")) {
+					t.Errorf("Unexpected body: got %s.", buf.String())
+				}
+			} else {
+				resp := rr.Result()
+				defer resp.Body.Close()
+				if body, err := ioutil.ReadAll(resp.Body); err != nil {
+					t.Errorf("Error reading response body: %v", err)
+				} else if string(body) != "hello" {
+					t.Errorf("Unexpected body: got %s.", string(body))
+				}
+			}
+		}
+	}
+}
+
+type fpjc kube.ProwJob
+
+func (fc *fpjc) GetProwJob(name string) (kube.ProwJob, error) {
+	return kube.ProwJob(*fc), nil
+}
+
+// TestRerun just checks that the result can be unmarshaled properly, has an
+// updated status, and has equal spec.
+func TestRerun(t *testing.T) {
+	fc := fpjc(kube.ProwJob{
+		Spec: kube.ProwJobSpec{
+			Job: "whoa",
+		},
+		Status: kube.ProwJobStatus{
+			State: kube.PendingState,
+		},
+	})
+	handler := handleRerun(&fc)
+	req, err := http.NewRequest(http.MethodGet, "/rerun?prowjob=wowsuch", nil)
+	if err != nil {
+		t.Fatalf("Error making request: %v", err)
+	}
+	rr := httptest.NewRecorder()
+	handler.ServeHTTP(rr, req)
+	if rr.Code != http.StatusOK {
+		t.Fatalf("Bad error code: %d", rr.Code)
+	}
+	resp := rr.Result()
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		t.Fatalf("Error reading response body: %v", err)
+	}
+	var res kube.ProwJob
+	if err := yaml.Unmarshal(body, &res); err != nil {
+		t.Fatalf("Error unmarshaling: %v", err)
+	}
+	if res.Spec.Job != "whoa" {
+		t.Errorf("Wrong job, expected \"whoa\", got \"%s\"", res.Spec.Job)
+	}
+	if res.Status.State != kube.TriggeredState {
+		t.Errorf("Wrong state, expected \"%v\", got \"%v\"", kube.TriggeredState, res.Status.State)
+	}
+}

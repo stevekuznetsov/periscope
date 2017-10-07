@@ -11,10 +11,6 @@ import (
 	"github.com/stevekuznetsov/periscope/pkg/config/sub"
 )
 
-const (
-	subscriptionName = "periscope"
-)
-
 func NewAgent(subConfig *sub.GoogleCloudStorage, logger *logrus.Entry) *Agent {
 	return &Agent{
 		subConfig: subConfig,
@@ -30,18 +26,14 @@ type Agent struct {
 func (a *Agent) Run() error {
 	ctx := context.Background()
 
-	client, err := pubsub.NewClient(ctx, a.subConfig.ProjectIdentifier, option.WithCredentialsFile(a.subConfig.CredentialsFile))
+	client, err := pubsub.NewClient(ctx, a.subConfig.Project, option.WithCredentialsFile(a.subConfig.CredentialsFile))
 	if err != nil {
 		return fmt.Errorf("failed to get a client: %v", err)
 	}
 	defer client.Close()
-	a.logger.Infof("created a GCP pub/sub client for project %q", a.subConfig.ProjectIdentifier)
+	a.logger.Infof("created a GCP pub/sub client for project %q", a.subConfig.Project)
 
-	topic := client.Topic(a.subConfig.Topic)
-	a.logger.Infof("created a GCP pub/sub topic for %q", topic.ID())
-
-
-	subscription := client.Subscription(subscriptionName)
+	subscription := client.Subscription(a.subConfig.Subscription)
 	a.logger.Infof("subscribed to GCP pub/sub topic as %q", subscription.ID())
 
 	if err := subscription.Receive(ctx, a.handle); err != nil {
@@ -49,6 +41,10 @@ func (a *Agent) Run() error {
 	}
 
 	return nil
+}
+
+type message struct {
+
 }
 
 func (a *Agent) handle(ctx context.Context, message *pubsub.Message) {

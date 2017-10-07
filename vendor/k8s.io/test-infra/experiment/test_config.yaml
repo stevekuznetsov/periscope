@@ -1,0 +1,854 @@
+# This file defines the list of tests whose definition and Prow configurations
+# that can be generated automatically.
+#
+# The name of the test job in this file must satisfy a predefined format, which
+# consists of several dimensions, such as cloud provider, OS image name,
+# Kubernetes version and test suites. The definition of each dimension is
+# provided separately from the job defintion. A tool can automatically generate
+# the test defintion and Prow configuration from the test name by pulling the
+# configs of each dimension in the test name and assembling them together.
+#
+# E.g., for test "ci-kubernetes-e2e-gce-ubuntustable1-k8sdev-serial", its
+# configuration will be generated from the configs of cloud provider "gce", the
+# image "ubuntustable1", the Kubernetes version "k8sdev" and the test suite
+# "serial".
+
+# To generate the test definitions and Prow configurations from this file:
+#
+#   bazel run //experiment:generate_tests -- \
+#     --yaml-config-path=experiment/test_config.yaml \
+#     --json-config-path=jobs/config.json \
+#     --prow-config-path=prow/config.yaml && bazel run //jobs:config_sort
+
+# Supported tests:
+#
+#  * cluster e2e test
+#    The name starts with "ci-kubernetes-e2e-" and must satisfy the following
+#    format:
+#      ci-kubernetes-e2e-<cloudProvider>-<image>-<k8sVersion>-<testSuite>
+#
+#  * node e2e test
+#    The name starts with "ci-kubernetes-e2enode-" and must satisfy the
+#    following format:
+#      ci-kubernetes-e2enode-<nodeImage>-<nodeK8sVersion>-<nodeTestSuite>
+
+# The envs and args defined in "jobs" override the ones defined in each
+# dimension.
+jobs:
+  # Cluster E2E Tests
+
+  # COS image validation.
+  #
+  # +------------+----------+----------+------------+------------+------------+
+  # |            |   k8sdev |  k8sbeta | k8sstable1 | k8sstable2 | k8sstable3 |
+  # +------------+----------+----------+------------+------------+------------+
+  # | cosdev     | every 2h | every 2h |   every 2h |      never |      never |
+  # +------------+----------+----------+------------+------------+------------+
+  # | cosbeta    | every 2h | every 2h |   every 2h |   every 2h |   every 2h |
+  # +------------+----------+----------+------------+------------+------------+
+  # | cosstable1 | every 2h | every 2h |   every 6h |   every 6h |   every 6h |
+  # +------------+----------+----------+------------+------------+------------+
+  # | cosstable2 |      n/a |      n/a |        n/a |        n/a |        n/a |
+  # +------------+----------+----------+------------+------------+------------+
+  ci-kubernetes-e2e-gce-cosdev-k8sdev-default:
+    interval: 2h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=cos-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-cosdev-k8sdev-slow:
+    interval: 2h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=cos-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-cosdev-k8sdev-serial:
+    interval: 2h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=cos-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-cosdev-k8sbeta-default:
+    interval: 2h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=cos-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-cosdev-k8sbeta-slow:
+    interval: 2h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=cos-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-cosdev-k8sbeta-serial:
+    interval: 2h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=cos-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-cosdev-k8sstable1-default:
+    interval: 2h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=cos-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-cosdev-k8sstable1-slow:
+    interval: 2h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=cos-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-cosdev-k8sstable1-serial:
+    interval: 2h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=cos-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-cosbeta-k8sdev-default:
+    interval: 2h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=cos-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-cosbeta-k8sdev-slow:
+    interval: 2h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=cos-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-cosbeta-k8sdev-serial:
+    interval: 2h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=cos-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-cosbeta-k8sbeta-default:
+    interval: 2h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=cos-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-cosbeta-k8sbeta-slow:
+    interval: 2h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=cos-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-cosbeta-k8sbeta-serial:
+    interval: 2h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=cos-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-cosbeta-k8sstable1-default:
+    interval: 2h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=cos-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-cosbeta-k8sstable1-slow:
+    interval: 2h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=cos-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-cosbeta-k8sstable1-serial:
+    interval: 2h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=cos-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-cosbeta-k8sstable2-default:
+    interval: 2h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=cos-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-cosbeta-k8sstable2-slow:
+    interval: 2h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=cos-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-cosbeta-k8sstable2-serial:
+    interval: 2h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=cos-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-cosbeta-k8sstable3-default:
+    interval: 2h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=cos-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-cosbeta-k8sstable3-slow:
+    interval: 2h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=cos-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-cosbeta-k8sstable3-serial:
+    interval: 2h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=cos-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-cosstable1-k8sdev-default:
+    interval: 2h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=cos-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-cosstable1-k8sdev-slow:
+    interval: 2h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=cos-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-cosstable1-k8sdev-serial:
+    interval: 2h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=cos-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-cosstable1-k8sbeta-default:
+    interval: 2h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=cos-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-cosstable1-k8sbeta-slow:
+    interval: 2h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=cos-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-cosstable1-k8sbeta-serial:
+    interval: 2h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=cos-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-cosstable1-k8sstable1-default:
+    interval: 6h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=cos-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-cosstable1-k8sstable1-slow:
+    interval: 6h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=cos-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-cosstable1-k8sstable1-serial:
+    interval: 6h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=cos-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-cosstable1-k8sstable2-default:
+    interval: 6h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=cos-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-cosstable1-k8sstable2-slow:
+    interval: 6h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=cos-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-cosstable1-k8sstable2-serial:
+    interval: 6h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=cos-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-cosstable1-k8sstable3-default:
+    interval: 6h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=cos-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-cosstable1-k8sstable3-slow:
+    interval: 6h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=cos-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-cosstable1-k8sstable3-serial:
+    interval: 6h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=cos-image-validation
+    sigOwners: ['sig-node']
+
+  # Ubuntu image validation.
+  #
+  # +---------------+----------+----------+------------+------------+------------+
+  # |               |   k8sdev |  k8sbeta | k8sstable1 | k8sstable2 | k8sstable3 |
+  # +---------------+----------+----------+------------+------------+------------+
+  # | ubuntudev     | every 2h | every 2h |   every 2h |      never |      never |
+  # +---------------+----------+----------+------------+------------+------------+
+  # | ubuntubeta    |      n/a |      n/a |        n/a |        n/a |        n/a |
+  # +---------------+----------+----------+------------+------------+------------+
+  # | ubuntustable1 | every 2h |      n/a |   every 2h |   every 6h |      never |
+  # +---------------+----------+----------+------------+------------+------------+
+  # | ubuntustable2 |      n/a |      n/a |        n/a |        n/a |        n/a |
+  # +---------------+----------+----------+------------+------------+------------+
+  ci-kubernetes-e2e-gce-ubuntudev-k8sdev-default:
+    interval: 2h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=ubuntu-os-gke-cloud-dev-tests  # Canonical owned project.
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-ubuntudev-k8sdev-slow:
+    interval: 2h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=ubuntu-os-gke-cloud-dev-tests  # Canonical owned project.
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-ubuntudev-k8sdev-serial:
+    interval: 2h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=ubuntu-os-gke-cloud-dev-tests  # Canonical owned project.
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-ubuntudev-k8sbeta-default:
+    interval: 2h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=ubuntu-os-gke-cloud-dev-tests  # Canonical owned project.
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-ubuntudev-k8sbeta-slow:
+    interval: 2h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=ubuntu-os-gke-cloud-dev-tests  # Canonical owned project.
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-ubuntudev-k8sbeta-serial:
+    interval: 2h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=ubuntu-os-gke-cloud-dev-tests  # Canonical owned project.
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-ubuntudev-k8sstable1-default:
+    interval: 2h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=ubuntu-os-gke-cloud-dev-tests  # Canonical owned project.
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-ubuntudev-k8sstable1-slow:
+    interval: 2h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=ubuntu-os-gke-cloud-dev-tests  # Canonical owned project.
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-ubuntudev-k8sstable1-serial:
+    interval: 2h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=ubuntu-os-gke-cloud-dev-tests  # Canonical owned project.
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-ubuntustable1-k8sdev-default:
+    interval: 2h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=ubuntu-os-gke-cloud-tests  # Canonical owned project.
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-ubuntustable1-k8sdev-slow:
+    interval: 2h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=ubuntu-os-gke-cloud-tests  # Canonical owned project.
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-ubuntustable1-k8sdev-serial:
+    interval: 2h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=ubuntu-os-gke-cloud-tests  # Canonical owned project.
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-ubuntustable1-k8sstable1-default:
+    interval: 2h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=ubuntu-os-gke-cloud-tests  # Canonical owned project.
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-ubuntustable1-k8sstable1-slow:
+    interval: 2h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=ubuntu-os-gke-cloud-tests  # Canonical owned project.
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-ubuntustable1-k8sstable1-serial:
+    interval: 2h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=ubuntu-os-gke-cloud-tests  # Canonical owned project.
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-ubuntustable1-k8sstable2-default:
+    interval: 6h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=ubuntu-os-gke-cloud-tests  # Canonical owned project.
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-ubuntustable1-k8sstable2-slow:
+    interval: 6h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=ubuntu-os-gke-cloud-tests  # Canonical owned project.
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gce-ubuntustable1-k8sstable2-serial:
+    interval: 6h
+    args:
+    - --check-leaked-resources=false # disabled since it uses shared project.
+    - --gcp-project=ubuntu-os-gke-cloud-dev-tests  # Canonical owned project.
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gke-ubuntustable1-k8sdev-alphafeatures:
+    interval: 2h
+    args:
+    - --gcp-project=k8s-jkns-gke-ubuntu-alpha
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gke-ubuntustable1-k8sdev-autoscaling:
+    interval: 2h
+    args:
+    - --gcp-project=k8s-jkns-gke-ubuntu-as
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gke-ubuntustable1-k8sdev-default:
+    interval: 2h
+    args:
+    - --gcp-project=k8s-jkns-gke-ubuntu
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gke-ubuntustable1-k8sdev-flaky:
+    interval: 2h
+    args:
+    - --gcp-project=k8s-jkns-gke-ubuntu-flaky
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gke-ubuntustable1-k8sdev-ingress:
+    interval: 2h
+    args:
+    - --gcp-project=k8s-jkns-gke-ubuntu-ingress
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gke-ubuntustable1-k8sdev-reboot:
+    interval: 2h
+    args:
+    - --gcp-project=k8s-jkns-gke-ubuntu-reboot
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gke-ubuntustable1-k8sdev-serial:
+    interval: 2h
+    args:
+    - --gcp-project=k8s-jkns-gke-ubuntu-serial
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gke-ubuntustable1-k8sdev-slow:
+    interval: 2h
+    args:
+    - --gcp-project=k8s-jkns-gke-ubuntu-slow
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gke-ubuntustable1-k8sdev-updown:
+    interval: 2h
+    args:
+    - --gcp-project=k8s-jkns-gke-ubuntu-updown
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gke-ubuntustable1-k8sstable1-alphafeatures:
+    interval: 2h
+    args:
+    - --gcp-project=k8s-test-761f0eadc1
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gke-ubuntustable1-k8sstable1-autoscaling:
+    interval: 2h
+    args:
+    - --gcp-project=k8s-test-4b6146a96f
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gke-ubuntustable1-k8sstable1-default:
+    interval: 2h
+    args:
+    - --gcp-project=k8s-test-f08378c6bb
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gke-ubuntustable1-k8sstable1-flaky:
+    interval: 2h
+    args:
+    - --gcp-project=k8s-test-7b1edb0409
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gke-ubuntustable1-k8sstable1-ingress:
+    interval: 2h
+    args:
+    - --gcp-project=k8s-test-73afed9487
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gke-ubuntustable1-k8sstable1-reboot:
+    interval: 2h
+    args:
+    - --gcp-project=k8s-test-139569f31c
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gke-ubuntustable1-k8sstable1-serial:
+    interval: 2h
+    args:
+    - --gcp-project=k8s-test-aac0a04ffb
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gke-ubuntustable1-k8sstable1-slow:
+    interval: 2h
+    args:
+    - --gcp-project=k8s-test-3e74ad8150
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gke-ubuntustable1-k8sstable1-updown:
+    interval: 2h
+    args:
+    - --gcp-project=k8s-test-7f37c1d417
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gke-ubuntustable1-k8sstable2-alphafeatures:
+    interval: 2h
+    args:
+    - --gcp-project=k8s-jkns-gke-ubuntu-1-6-alpha
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gke-ubuntustable1-k8sstable2-autoscaling:
+    interval: 2h
+    args:
+    - --gcp-project=k8s-jkns-gke-ubuntu-1-6-as
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gke-ubuntustable1-k8sstable2-default:
+    interval: 2h
+    args:
+    - --gcp-project=k8s-jkns-gke-ubuntu-1-6
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gke-ubuntustable1-k8sstable2-flaky:
+    interval: 2h
+    args:
+    - --gcp-project=k8s-jkns-gke-ubuntu-1-6-flaky
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gke-ubuntustable1-k8sstable2-ingress:
+    interval: 2h
+    args:
+    - --gcp-project=k8s-jkns-gke-ubuntu-1-6-ingres
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gke-ubuntustable1-k8sstable2-reboot:
+    interval: 2h
+    args:
+    - --gcp-project=k8s-jkns-gke-ubuntu-1-6-reboot
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gke-ubuntustable1-k8sstable2-serial:
+    interval: 2h
+    args:
+    - --gcp-project=k8s-jkns-gke-ubuntu-1-6-serial
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gke-ubuntustable1-k8sstable2-slow:
+    interval: 2h
+    args:
+    - --gcp-project=k8s-jkns-gke-ubuntu-1-6-slow
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2e-gke-ubuntustable1-k8sstable2-updown:
+    interval: 2h
+    args:
+    - --gcp-project=k8s-jkns-gke-ubuntu-1-6-updown
+    sigOwners: ['sig-node']
+
+  # Others
+  ci-kubernetes-e2e-gce-cosbeta-k8sdev-nosnat:
+    interval: 24h
+    args:
+    - --gcp-project=k8s-e2e-170223
+    sigOwners: ['sig-network']
+
+  # Node E2E Tests
+
+  ci-kubernetes-e2enode-cosbeta-k8sdev-default:
+    interval: 2h
+    args:
+    - --project=cos-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2enode-cosbeta-k8sdev-serial:
+    interval: 2h
+    args:
+    - --project=cos-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2enode-cosstable1-k8sdev-default:
+    interval: 2h
+    args:
+    - --project=k8s-test-63a7f7788a
+    - --instance-metadata=user-data<test/e2e_node/jenkins/cos-init-live-restore.yaml,gci-update-strategy=update_disabled
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2enode-cosstable1-k8sdev-serial:
+    interval: 2h
+    args:
+    - --project=k8s-test-39a894cbd4
+    - --instance-metadata=user-data<test/e2e_node/jenkins/cos-init-live-restore.yaml,gci-update-strategy=update_disabled
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2enode-cosstable1-k8sbeta-default:
+    interval: 2h
+    args:
+    - --project=k8s-test-f1ca4a9c02
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2enode-cosstable1-k8sbeta-serial:
+    interval: 2h
+    args:
+    - --project=k8s-test-1d6ad79530
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2enode-cosstable1-k8sstable1-default:
+    interval: 2h
+    args:
+    - --project=k8s-test-7714104ae1
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2enode-cosstable1-k8sstable1-serial:
+    interval: 2h
+    args:
+    - --project=k8s-test-27d359e3d6
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2enode-cosstable1-k8sstable2-default:
+    interval: 6h
+    args:
+    - --project=k8s-test-9f6500beee
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2enode-cosstable1-k8sstable2-serial:
+    interval: 6h
+    args:
+    - --project=k8s-test-5f678591cd
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2enode-cosstable1-k8sstable3-default:
+    interval: 6h
+    args:
+    - --project=k8s-test-1cee98f86d
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2enode-cosstable1-k8sstable3-serial:
+    interval: 6h
+    args:
+    - --project=k8s-test-592642f0ef
+    sigOwners: ['sig-node']
+
+  ci-kubernetes-e2enode-ubuntudev-k8sdev-gkespec:
+    interval: 2h
+    args:
+    - --project=ubuntu-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2enode-ubuntudev-k8sdev-serial:
+    interval: 2h
+    args:
+    - --project=ubuntu-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2enode-ubuntudev-k8sstable1-gkespec:
+    interval: 2h
+    args:
+    - --project=ubuntu-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2enode-ubuntudev-k8sstable1-serial:
+    interval: 2h
+    args:
+    - --project=ubuntu-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2enode-ubuntudev-k8sstable2-gkespec:
+    interval: 2h
+    args:
+    - --project=ubuntu-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2enode-ubuntudev-k8sstable2-serial:
+    interval: 2h
+    args:
+    - --project=ubuntu-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2enode-ubuntustable1-k8sdev-gkespec:
+    interval: 2h
+    args:
+    - --project=ubuntu-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2enode-ubuntustable1-k8sdev-serial:
+    interval: 2h
+    args:
+    - --project=ubuntu-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2enode-ubuntustable1-k8sstable1-gkespec:
+    interval: 2h
+    args:
+    - --project=ubuntu-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2enode-ubuntustable1-k8sstable1-serial:
+    interval: 2h
+    args:
+    - --project=ubuntu-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2enode-ubuntustable1-k8sstable2-gkespec:
+    interval: 2h
+    args:
+    - --project=ubuntu-image-validation
+    sigOwners: ['sig-node']
+  ci-kubernetes-e2enode-ubuntustable1-k8sstable2-serial:
+    interval: 2h
+    args:
+    - --project=ubuntu-image-validation
+    sigOwners: ['sig-node']
+
+
+# The following settings are used by cluster e2e tests.
+
+common:
+  args:
+  - --cluster=test-${job_name_hash}
+  - --gcp-project=k8s-test-${job_name_hash}
+
+cloudProviders:
+  gce:
+    args:
+    - --check-leaked-resources
+    - --provider=gce
+    - --gcp-zone=us-central1-f
+    - --env=CLOUDSDK_CORE_PRINT_UNHANDLED_TRACEBACKS=1
+  gke:
+    args:
+    - --check-leaked-resources
+    - --provider=gke
+    - --deployment=gke
+    - --gcp-zone=us-central1-f
+    - --gcp-cloud-sdk=gs://cloud-sdk-testing/ci/staging
+    - --gke-environment=test
+
+images:
+  cosdev:
+    args:
+    - --image-family=cos-dev
+    - --image-project=cos-cloud
+    - --gcp-node-image=gci
+  cosbeta:
+    args:
+    - --image-family=cos-beta
+    - --image-project=cos-cloud
+    - --gcp-node-image=gci
+  cosstable1:
+    args:
+    - --image-family=cos-stable
+    - --image-project=cos-cloud
+    - --gcp-node-image=gci
+  ubuntudev:
+    args:
+    - --image-family=ubuntu-gke-1604-lts
+    - --image-project=ubuntu-os-gke-cloud-devel
+    - --gcp-node-image=ubuntu
+  ubuntustable1:
+    args:
+    - --image-family=ubuntu-gke-1604-lts
+    - --image-project=ubuntu-os-gke-cloud
+    - --gcp-node-image=ubuntu
+
+k8sVersions:
+  dev:
+    args:
+    - --extract=ci/latest
+  beta:
+    args:
+    # Run against HEAD since there's currently no Kubernetes beta release.
+    - --extract=ci/latest
+  stable1:
+    args:
+    - --extract=ci/latest-1.8
+  stable2:
+    args:
+    - --extract=ci/latest-1.7
+  stable3:
+    args:
+    - --extract=ci/latest-1.6
+
+testSuites:
+  alphafeatures:
+    args:
+    - --timeout=180m
+    - --test_args=--ginkgo.focus=\[Feature:DynamicKubeletConfig\] --minStartupPods=8
+  autoscaling:
+    args:
+    - --timeout=300m
+    - --test_args=--ginkgo.focus=\[Feature:ClusterSizeAutoscalingScaleUp\]|\[Feature:ClusterSizeAutoscalingScaleDown\] --ginkgo.skip=\[Flaky\] --minStartupPods=8
+  default:
+    args:
+    - --timeout=50m
+    - --test_args=--ginkgo.skip=\[Slow\]|\[Serial\]|\[Disruptive\]|\[Flaky\]|\[Feature:.+\] --minStartupPods=8
+    - --ginkgo-parallel=30
+  flaky:
+    args:
+    - --timeout=300m
+    - --test_args=--ginkgo.focus=\[Flaky\] --ginkgo.skip=\[Feature:.+\] --minStartupPods=8
+  ingress:
+    args:
+    - --timeout=300m
+    - --test_args=--ginkgo.focus=\[Feature:Ingress\] --minStartupPods=8
+  reboot:
+    args:
+    - --timeout=180m
+    - --test_args=--ginkgo.focus=\[Feature:Reboot\] --minStartupPods=8
+  serial:
+    args:
+    - --timeout=500m
+    - --test_args=--ginkgo.focus=\[Serial\]|\[Disruptive\] --ginkgo.skip=\[Flaky\]|\[Feature:.+\] --minStartupPods=8
+    - --ginkgo-parallel=1
+  slow:
+    args:
+    - --timeout=150m
+    - --test_args=--ginkgo.focus=\[Slow\] --ginkgo.skip=\[Serial\]|\[Disruptive\]|\[Flaky\]|\[Feature:.+\] --minStartupPods=8
+    - --ginkgo-parallel=30
+  updown:
+    args:
+    - --timeout=30m
+    - --test_args=--ginkgo.focus=\[k8s.io\]\sNetworking.*\[Conformance\] --minStartupPods=8
+    - --ginkgo-parallel
+  nosnat:
+    args:
+    - --timeout=20m
+    - --test_args=--ginkgo.focus=\\[Feature:NoSNAT\\] --minStartupPods=8
+    - --ginkgo-parallel=1
+
+# The following settings are used by node e2e tests.
+
+nodeCommon:
+    args:
+    - --cleanup=true
+    - --ssh-user=prow
+    - --zone=us-central1-f
+
+nodeImages:
+  cosbeta:
+    args:
+    - --images=cos-beta-61-9765-31-0
+    - --image-project=cos-cloud
+  cosstable1:
+    args:
+    - --images=cos-stable-60-9592-84-0
+    - --image-project=cos-cloud
+  ubuntudev:
+    args:
+    - --images=ubuntu-gke-1604-xenial-v20170816-1
+    - --image-project=ubuntu-os-gke-cloud-devel
+  ubuntustable1:
+    args:
+    - --images=ubuntu-gke-1604-xenial-v20170816-1
+    - --image-project=ubuntu-os-gke-cloud
+
+nodeK8sVersions:
+  dev:
+    args:
+    - --repo=k8s.io/kubernetes=master
+  beta:
+    args:
+    # Run against HEAD since there's currently no Kubernetes beta release.
+    - --repo=k8s.io/kubernetes=master
+  stable1:
+    args:
+    - --repo=k8s.io/kubernetes=release-1.8
+  stable2:
+    args:
+    - --repo=k8s.io/kubernetes=release-1.7
+  stable3:
+    args:
+    - --repo=k8s.io/kubernetes=release-1.6
+
+nodeTestSuites:
+  default:
+    args:
+    - --test-timeout=60m
+    - --ginkgo-flags=--nodes=8 --skip="\[Flaky\]|\[Serial\]"
+    - --test_args=--kubelet-flags="--cgroups-per-qos=true --cgroup-root=/"
+  gkespec:
+    args:
+    - --system-spec-name=gke
+    - --test-timeout=60m
+    - --ginkgo-flags=--nodes=8 --skip="\[Flaky\]|\[Serial\]"
+    - --test_args=--kubelet-flags="--cgroups-per-qos=true --cgroup-root=/"
+  serial:
+    args:
+    - --test-timeout=180m
+    - --ginkgo-flags=--nodes=1 --focus="\[Serial\]" --skip="\[Flaky\]|\[Benchmark\]"
+    - --test_args=--kubelet-flags="--cgroups-per-qos=true --cgroup-root=/" --feature-gates=DynamicKubeletConfig=true
