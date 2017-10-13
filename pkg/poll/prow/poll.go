@@ -2,7 +2,6 @@ package prow
 
 import (
 	"fmt"
-	"strconv"
 	"sync"
 
 	"github.com/sirupsen/logrus"
@@ -30,14 +29,14 @@ type Agent struct {
 
 	// cache holds the last known resourceVersion
 	// for every ProwJob we process
-	cache map[string]int64
+	cache map[string]string
 	// lock guards access to the cache
 	lock sync.RWMutex
 }
 
 // MarkSeen marks the ProwJob processed at the
 // specified version.
-func (a *Agent) MarkSeen(uid string, resourceVersion int64) {
+func (a *Agent) MarkSeen(uid, resourceVersion string) {
 	a.lock.Lock()
 	defer a.lock.Unlock()
 
@@ -46,7 +45,7 @@ func (a *Agent) MarkSeen(uid string, resourceVersion int64) {
 
 // Seen determines if we have previously processed
 // this ProwJob at the specified version.
-func (a *Agent) Seen(uid string, resourceVersion int64) bool {
+func (a *Agent) Seen(uid, resourceVersion string) bool {
 	a.lock.Lock()
 	defer a.lock.Unlock()
 
@@ -55,7 +54,7 @@ func (a *Agent) Seen(uid string, resourceVersion int64) bool {
 		return false
 	}
 
-	return resourceVersion <= lastVersion
+	return resourceVersion == lastVersion
 }
 
 func (a *Agent) Run() error {
@@ -110,11 +109,7 @@ func (a *Agent) Run() error {
 func (a *Agent) filterJobs(jobs []kube.ProwJob) []kube.ProwJob {
 	filtered := jobs[:0]
 	for _, job := range jobs {
-		version, err := strconv.ParseInt(job.Metadata.ResourceVersion, 10, 32)
-		if err != nil {
-			continue
-		}
-		if !a.Seen(job.Metadata.UID, version) {
+		if !a.Seen(job.Metadata.UID, job.Metadata.ResourceVersion) {
 			filtered = append(filtered, job)
 		}
 	}
