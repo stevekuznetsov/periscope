@@ -8,6 +8,7 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/stevekuznetsov/periscope/pkg/config/postgresql"
+	"github.com/stevekuznetsov/periscope/pkg/model"
 )
 
 func NewClient(credentials *postgresql.Credentials, logger *logrus.Entry) (*Client, error) {
@@ -36,4 +37,17 @@ type Client struct {
 	db          *sql.DB
 	credentials *postgresql.Credentials
 	logger      *logrus.Entry
+}
+
+// MergeJob will idempotently add the information
+// stored in job into the database.
+func (c *Client) MergeJob(job *model.Job) error {
+	_, err := c.db.Exec(
+		`INSERT INTO builds (job, build) VALUES($1, $2) ON CONFLICT DO NOTHING`,
+		job.Name,
+		job.Build,
+	)
+	if err != nil {
+		return err
+	}
 }

@@ -8,8 +8,17 @@ CREATE TYPE job_type AS ENUM (
 CREATE TABLE builds (
   id SERIAL PRIMARY KEY UNIQUE,
   job TEXT NOT NULL,
-  build TEXT NOT NULL,
-  type job_type NOT NULL
+  build INTEGER NOT NULL,
+  UNIQUE (job, build)
+);
+
+CREATE TABLE metadata (
+  id INTEGER PRIMARY KEY UNIQUE NOT NULL,
+  FOREIGN KEY (id) REFERENCES builds(id),
+  type job_type NOT NULL,
+  start INTEGER,
+  finish INTEGER,
+  success BOOLEAN
 );
 
 CREATE TABLE repos (
@@ -25,7 +34,8 @@ CREATE TABLE pulls (
   id INTEGER PRIMARY KEY NOT NULL,
   FOREIGN KEY (id) REFERENCES builds(id),
   pull INTEGER NOT NULL,
-  sha CHAR(40) NOT NULL
+  sha CHAR(40) NOT NULL,
+  UNIQUE (id, pull)
 );
 
 CREATE TABLE junit_summaries (
@@ -43,7 +53,8 @@ CREATE TABLE junit_failures (
   duration INTEGER,
   output TEXT,
   stdout TEXT,
-  stderr TEXT
+  stderr TEXT,
+  UNIQUE (id, name)
 );
 
 CREATE TABLE storage (
